@@ -9,12 +9,14 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Net.Security;
+//using System.Net.Http.Headers;
 
 public class WWWFormImage : MonoBehaviour
 {
     private TestSocketIO _testSocketScript;
     private SocketIOComponent _socket;
 
+    //public AuthenticationHeaderValue Authorization { get; set; }
 
     private void OnMouseDown()
     {
@@ -24,7 +26,6 @@ public class WWWFormImage : MonoBehaviour
         _socket = _testSocketScript.socket;
 
         ServicePointManager.ServerCertificateValidationCallback = MyRemoteCertificateValidationCallback;
-
 
 
         string url = "https://IoTBioband.azure-devices.net/devices/myFirstNodeDevice/messages/devicebound?api-version=2016-02-03";
