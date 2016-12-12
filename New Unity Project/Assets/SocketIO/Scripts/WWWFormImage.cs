@@ -17,8 +17,23 @@ public class WWWFormImage : MonoBehaviour
         _socket           = _testSocketScript.socket;
 
         Debug.Log("click");
-        StartCoroutine(UploadPNG());
+       // StartCoroutine(UploadPNG());
+        StartCoroutine(UploadData());
     }
+
+
+    IEnumerator UploadData()
+    {
+
+        yield return new WaitForEndOfFrame();
+
+        //these are just blank values to send basic values over
+        int temp = 50;
+        int lit = 60;
+
+        Debug.Log("Temp:" + temp + "Light:" + lit);
+    }
+
 
     IEnumerator UploadPNG()
     {
