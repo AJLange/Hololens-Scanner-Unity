@@ -1,9 +1,17 @@
  'use strict';
 
+ var nconf = require ('nconf'); 
+
+ nconf
+ .file({file: './localconfig.json'})
+ .env();
+
+ var connectionString = nconf.get("IOTPrimaryKey");
+ console.log(connectionString);
  var clientFromConnectionString = require('azure-iot-device-amqp').clientFromConnectionString;
  var Message = require('azure-iot-device').Message;
 
- var connectionString = 'HostName=IoTBioband.azure-devices.net;DeviceId=myFirstNodeDevice;SharedAccessKey=uNUYJKv6JuDgRm5dhLuqELyEmaZP618q6CnvvZf3XUg=';
+
 
  var client = clientFromConnectionString(connectionString);
 
@@ -22,8 +30,9 @@
 
      // Create a message and send it to the IoT Hub every second
      setInterval(function(){
-         var windSpeed = 10 + (Math.random() * 4);
-         var data = JSON.stringify({ deviceId: 'myFirstNodeDevice', windSpeed: windSpeed });
+         var temp = 10 + (Math.random() * 4);
+         var light = 10 + (Math.random() * 4);
+         var data = JSON.stringify({ deviceId: 'myFirstNodeDevice', Tempurature: temp, Light: light });
          var message = new Message(data);
          console.log("Sending message: " + message.getData());
          client.sendEvent(message, printResultFor('send'));

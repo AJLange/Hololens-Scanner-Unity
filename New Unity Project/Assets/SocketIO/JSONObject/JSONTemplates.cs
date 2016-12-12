@@ -9,6 +9,8 @@ using System.Reflection;
  * Copyright Matt Schoen 2010
  */
 
+
+
 public static partial class JSONTemplates {
 	static readonly HashSet<object> touched = new HashSet<object>();
 

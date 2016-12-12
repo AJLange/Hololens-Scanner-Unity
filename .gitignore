@@ -52,3 +52,7 @@ Temp
 Project/Library
 New Unity Project/Library/
 Node-Server/node_modules/
+/IoT/simulateddevice/localconfig.json
+
+/New Unity Project/Library
+/IoT/simulateddevice/node_modules

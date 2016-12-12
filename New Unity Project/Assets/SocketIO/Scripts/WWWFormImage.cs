@@ -1,24 +1,69 @@
 ﻿using System;
+using System.Net;
+using System.IO;
 using UnityEngine;
 using System.Collections;
 using SocketIO;
 using Debug = UnityEngine.Debug;
+using System.Collections.Generic;
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
+using System.Net.Security;
 
 public class WWWFormImage : MonoBehaviour
 {
     private TestSocketIO _testSocketScript;
     private SocketIOComponent _socket;
 
+
     private void OnMouseDown()
     {
         // Get sockets script
-        GameObject go     = GameObject.Find("TestSocketObj");
+        GameObject go = GameObject.Find("TestSocketObj");
         _testSocketScript = go.GetComponent<TestSocketIO>();
-        _socket           = _testSocketScript.socket;
+        _socket = _testSocketScript.socket;
+
+        ServicePointManager.ServerCertificateValidationCallback = MyRemoteCertificateValidationCallback;
+
+
+
+        string url = "https://IoTBioband.azure-devices.net/devices/myFirstNodeDevice/messages/devicebound?api-version=2016-02-03";
+   
+        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+        HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+        Stream resStream = response.GetResponseStream();
+        Debug.Log(resStream);
 
         Debug.Log("click");
-       // StartCoroutine(UploadPNG());
-        StartCoroutine(UploadData());
+        // StartCoroutine(UploadPNG());
+         StartCoroutine(UploadData());
+    }
+
+
+
+    public bool MyRemoteCertificateValidationCallback(System.Object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+    {
+        bool isOk = true;
+        // If there are errors in the certificate chain, look at each error to determine the cause.
+        if (sslPolicyErrors != SslPolicyErrors.None)
+        {
+            for (int i = 0; i < chain.ChainStatus.Length; i++)
+            {
+                if (chain.ChainStatus[i].Status != X509ChainStatusFlags.RevocationStatusUnknown)
+                {
+                    chain.ChainPolicy.RevocationFlag = X509RevocationFlag.EntireChain;
+                    chain.ChainPolicy.RevocationMode = X509RevocationMode.Online;
+                    chain.ChainPolicy.UrlRetrievalTimeout = new TimeSpan(0, 1, 0);
+                    chain.ChainPolicy.VerificationFlags = X509VerificationFlags.AllFlags;
+                    bool chainIsValid = chain.Build((X509Certificate2)certificate);
+                    if (!chainIsValid)
+                    {
+                        isOk = false;
+                    }
+                }
+            }
+        }
+        return isOk;
     }
 
 
@@ -31,8 +76,10 @@ public class WWWFormImage : MonoBehaviour
         int temp = 50;
         int lit = 60;
 
-        Debug.Log("Temp:" + temp + "Light:" + lit);
+        Debug.Log("Temp: " + temp + "Light: " + lit);
+
     }
+
 
 
     IEnumerator UploadPNG()
