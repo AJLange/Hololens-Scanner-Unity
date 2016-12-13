@@ -9,9 +9,7 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Net.Security;
-
-
-
+using System.Text;
 
 public class WWWFormImage : MonoBehaviour
 {
@@ -34,13 +32,24 @@ public class WWWFormImage : MonoBehaviour
 
         HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
         request.Headers.Add("Authorization", "SharedAccessSignature sr=IoTBioband.azure-devices.net%2Fdevices%2FmyFirstNodeDevice&sig=91l2KDTlOuAvyZpp3r6VRX5mTWip1OmKOtd8R7UD93k%3D&se=1482068965");
+
+        string postData = "{\"Name\":\"Amanda\"}";
+        ASCIIEncoding encoding = new ASCIIEncoding();
+        byte[] byte1 = encoding.GetBytes(postData);
         request.ContentType = "application/atom+xml";
         request.Method = "POST";
+        request.ContentLength = byte1.Length;
+
+        Stream newStream = request.GetRequestStream();
+
+        newStream.Write(byte1, 0, byte1.Length);
+
+
+        // Close the Stream object.
+        newStream.Close();
         HttpWebResponse response = (HttpWebResponse)request.GetResponse();
 
-
-
-            Stream resStream = response.GetResponseStream();
+        Stream resStream = response.GetResponseStream();
         Debug.Log(resStream);
 
 
